@@ -1,0 +1,274 @@
+---
+title: "Assignment_3_Doing_DS"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+Question 1: 
+
+Deeptis-Air:~ Shantanu$ mkdir gitrepo <br />
+Deeptis-Air:~ Shantanu$ cd gitrepo <br />
+Deeptis-Air:gitrepo Shantanu$ git clone https://github.com/awesomedata/awesome-public-datasets.git <br />
+Cloning into 'awesome-public-datasets'... <br />
+remote: Counting objects: 1484, done. <br />
+remote: Total 1484 (delta 0), reused 0 (delta 0), pack-reused 1484 <br />
+Receiving objects: 100% (1484/1484), 565.76 KiB | 303.00 KiB/s, done. <br />
+Resolving deltas: 100% (866/866), done. <br />
+Deeptis-Air:gitrepo Shantanu$ <br />
+
+Question 2: A
+
+```{r}
+
+getwd()
+file = "/Users/Shantanu/gitrepo/awesome-public-datasets/Datasets/titanic.csv"
+Titanic.data = read.csv(file=file,head=TRUE,sep=",")
+nrow(Titanic.data)
+
+head(Titanic.data)
+```
+
+Question 2: B
+
+```{r}
+
+n.male = 0
+n.female = 0
+
+for  (i in 1:nrow(Titanic.data)){
+  
+record = Titanic.data[i,] 
+
+if (record$Sex == 'male' | record$Sex == 'Male') {
+  
+  n.male = n.male + 1
+
+  }
+
+else if (record$Sex == 'female' | record$Sex == 'Female') {  
+  
+  n.female = n.female + 1
+    
+  }
+  
+}
+  
+
+gender_dist = data.frame(Male=n.male, Female=n.female)
+
+barplot(as.matrix(gender_dist), beside = TRUE, ylim = c(0,700), main = 'Gender Distribition')
+```
+
+Question 2. C
+
+```{r}
+
+lapply(Titanic.data['Fare'], mean)
+
+lapply(Titanic.data['Survived'], mean)
+# Assuming here that the mean of the column survived was asked in the question
+
+sapply(Titanic.data['Age'],mean,na.rm=TRUE)
+
+
+```
+
+Question 3.
+
+```{r}
+
+getwd()
+file = "/Users/Shantanu/Data_Files/sleep_data_01.csv"
+Sleep.data = read.csv(file=file,head=TRUE,sep=",")
+nrow(Sleep.data)
+head(Sleep.data)
+
+
+```
+
+
+3A.
+
+
+
+```{r}
+
+
+
+
+# Median Age
+
+func.basic.stats.median <- function(my_vector) {
+
+x = median(my_vector, na.rm = TRUE)
+
+return(x)
+
+}
+
+
+# Minimum Sleep
+
+func.basic.stats.min <- function(my_vector) {
+
+x = min(my_vector, na.rm = TRUE)
+return(x)
+
+}
+
+
+
+# Maximum Sleep
+
+func.basic.stats.min <- function(my_vector) {
+
+x = max(my_vector, na.rm = TRUE)
+return(x)
+
+}
+
+
+# Mean
+
+func.basic.stats.mean <- function(my_vector) {
+
+x = mean(my_vector, na.rm = TRUE)
+return(x)
+
+} 
+
+
+# Standard Diev
+
+func.basic.stats.sd <- function(my_vector) {
+
+x = sd(my_vector, na.rm = TRUE)
+return(x)
+
+} 
+
+
+```
+
+Question 3.b
+
+```{r}
+
+
+change.column.names <- function(passed.df){
+  
+  colnames(passed.df)[1] <- "MedianAge"
+  colnames(passed.df)[2] <- "SelfEsteem"
+  colnames(passed.df)[3] <- "SE_SD"
+  colnames(passed.df)[4] <- "DurationRange"
+  
+  return(passed.df)
+  
+}
+
+func.operations.df <- function(passed.df){
+  
+sleep.study.median.age = median(passed.df[,'Age'], na.rm = TRUE)
+
+sleep.study.min.sleep = min(passed.df[ ,'Duration'], na.rm = TRUE)
+sleep.study.min.sleep
+
+sleep.study.max.sleep = max(passed.df[ ,'Duration'], na.rm = TRUE)
+sleep.study.max.sleep
+
+sleep.study.mean.RSES = mean(passed.df[ ,'RSES'], na.rm = TRUE)
+sleep.study.mean.RSES
+ 
+sleep.study.sd.RSES = sd(passed.df[ ,'RSES'], na.rm = TRUE)
+sleep.study.sd.RSES
+
+report <- data.frame( m_age = sleep.study.median.age,
+                  RSES_Mean = sleep.study.mean.RSES,
+                  sdupon5 = (sleep.study.sd.RSES/5),
+                  rng = (sleep.study.max.sleep - sleep.study.min.sleep))
+
+
+report = change.column.names(report)
+
+report[] <- lapply(report, function(x) if(is.numeric(x)) round(x, 2) else x)
+
+return(report)
+  
+}
+
+report = func.operations.df(Sleep.data)
+
+report
+
+```
+
+Q4.
+
+
+```{r}
+
+library(fivethirtyeight)
+
+data(package = "fivethirtyeight")
+
+college_grads <- college_recent_grads
+
+# https://github.com/rudeboybert/fivethirtyeight/tree/master/docs/articles
+
+head(college_grads)
+
+dim (college_grads)
+
+colnames(college_grads)
+
+```
+
+Q5.
+
+```{r}
+
+colnames(college_grads)
+ncol(college_grads)
+
+library(tidyverse)
+library(dplyr)
+
+count_cat = college_grads %>% count(major_category)
+
+values = count_cat$n
+
+arguments = count_cat$major_category
+
+par(las=2)
+barplot(values,names.arg = arguments, horiz = TRUE, xlim=c(0,40), main = 'Graduate College Category Counts')
+
+write.csv(count_cat,"CountCat.csv",row.names = FALSE)
+write.csv(college_grads,"CollegeGradsData.csv",row.names = FALSE)
+
+
+```
+
+Q6:
+
+GitHub Link: https://github.com/Shangodbole/SMUMSDS_HW.git
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
